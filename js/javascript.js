@@ -26,58 +26,82 @@ function getHumanChoice() {
     }
 }
 
+let humanScore = 0;
+let computerScore = 0;
+let resultDiv = document.querySelector(".results");
+let resultText = ""
 
-function playGame(){
-    let humanScore = 0;
-    let computerScore = 0;
 
-    function playRound(humanChoice,computerChoice) {
-        if (humanChoice === computerChoice){
-            console.log("it's a draw");
-        }else{
-            if (humanChoice === "rock"){
-                if (computerChoice === "paper"){
-                    console.log("You lose! paper beats rock");
-                    computerScore++;
-                }else{
-                    console.log("You win! rock beats scissors");
-                    humanScore++;
-                }
-            }else if (humanChoice === "paper"){
-                if (computerChoice === "scissors"){
-                    console.log("You lose! scissors beats paper");
-                    computerScore++;
-                }else{
-                    console.log("You win! paper beats rock");
-                    humanScore++;
-                }
+function playRound(humanChoice,computerChoice) {
+    if (humanChoice === computerChoice){
+        resultText = "it's a draw";
+    }else{
+        if (humanChoice === "rock"){
+            if (computerChoice === "paper"){
+                resultText = "You lose! paper beats rock";
+                computerScore++;
             }else{
-                if (computerChoice === "rock"){
-                    console.log("You lose! rock beats scissors");
-                    computerScore++;
-                }else{
-                    console.log("You win! scissors beats paper");
-                    humanScore++;
-                }
+                resultText = "You win! rock beats scissors";
+                humanScore++;
+            }
+        }else if (humanChoice === "paper"){
+            if (computerChoice === "scissors"){
+                resultText = "You lose! scissors beats paper";
+                computerScore++;
+            }else{
+                resultText = "You win! paper beats rock";
+                humanScore++;
+            }
+        }else{
+            if (computerChoice === "rock"){
+                resultText = "You lose! rock beats scissors";
+                computerScore++;
+            }else{
+                resultText = "You win! scissors beats paper";
+                humanScore++;
             }
         }
     }
-
-    console.log("Game start, best of 5");
-    let keepPlaying = true
-    while (keepPlaying) {
-        playRound(getHumanChoice(),getComputerChoice());
-        console.log(`current score ${humanScore}-${computerScore}`);
-        if ((humanScore >= 3) || (computerScore >= 3)) keepPlaying = false;
-    }
-    if (humanScore > computerScore) {
-        console.log(`you win ${humanScore} to ${computerScore}`);
-    }else{
-        console.log(`you lose ${computerScore} to ${humanScore}`);
-
-    }
+    resultDiv.textContent = resultText;
 }
 
-while (true){
-    playGame();
+let playButtons = document.querySelector(".play-buttons");
+let scoreDiv = document.querySelector(".score");
+let scoreText = ""
+let gameEnd = false
+for (let btn of Array.from(playButtons.children)){
+    btn.addEventListener("click", () =>{
+        if (gameEnd){
+            gameEnd = false;
+            scoreDiv.style.fontWeight = 400;
+            scoreDiv.style.fontSize = "16px";
+        }
+        switch (btn.id){
+            case "btn-rock":
+                humanChoice = "rock";
+                break;
+            case "btn-paper":
+                humanChoice = "paper";
+                break;
+            case "btn-scissors":
+                humanChoice = "scissors";
+                break;
+        }
+        playRound(humanChoice,getComputerChoice());
+        scoreText = `current score ${humanScore}-${computerScore}`;
+        if ((humanScore === 5) || (computerScore === 5)){
+            if (humanScore === 5){
+                scoreText = `You Win: ${humanScore}-${computerScore}`;
+            }else if (computerScore === 5){
+                scoreText = `You Lose: ${humanScore}-${computerScore}`;
+            }
+            scoreDiv.style.fontWeight = 700;
+            scoreDiv.style.fontSize = "24px";
+            humanScore = 0;
+            computerScore = 0;
+            gameEnd = true;
+        }
+        scoreDiv.textContent = scoreText;
+    })
+    
 }
